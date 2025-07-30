@@ -1,0 +1,36 @@
+{
+  "name": "second-brain",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "start": "node ./dist/index" ,
+    "dev":"tsc -b && node ./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SanjayKumarar27/Second-Brain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SanjayKumarar27/Second-Brain/issues"
+  },
+  "homepage": "https://github.com/SanjayKumarar27/Second-Brain#readme",
+  "description": "",
+  "dependencies": {
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.5",
+    "typescript": "^5.8.3",
+    "zod": "^4.0.13"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0"
+  }
+}
