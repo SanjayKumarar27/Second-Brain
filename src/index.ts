@@ -121,7 +121,7 @@ app.post("/app/v1/signin",async (req,res)=>{
 })
 
 
-app.post("app/v1/content",userMiddleware,async (req,res)=>{
+app.post("/app/v1/content",userMiddleware,async (req,res)=>{
      //@ts-ignore
     const userid=req.userid;
     const {link,type,title,tags}=req.body;
@@ -140,20 +140,21 @@ app.post("app/v1/content",userMiddleware,async (req,res)=>{
 })
 
 
-app.get("app/v1/content",userMiddleware,async (req,res)=>{
+app.get("/app/v1/content",userMiddleware,async (req,res)=>{
     //@ts-ignore
     const userid=req.userid;
     const content=await ContentModel.find({
         userid
-    })
+    }).populate("userid","username")
+
     res.status(200).json({
         content
     })
 })
-app.delete("app/v1/content",userMiddleware,async (req,res)=>{
+app.delete("/app/v1/content",userMiddleware,async (req,res)=>{
      //@ts-ignore
     const userid=req.userid;
-    const contentId=req.query.contentid;
+    const contentId=req.body.contentid;
     await ContentModel.deleteOne({
         userid,
         _id:contentId
@@ -163,10 +164,10 @@ app.delete("app/v1/content",userMiddleware,async (req,res)=>{
         msg:"content deleted"
     })
 })
-app.post("app/v1/brain/share",(req,res)=>{
+app.post("/app/v1/brain/share",(req,res)=>{
     
 })
-app.get("app/v1/brain/:shareLink",(req,res)=>{
+app.get("/app/v1/brain/:shareLink",(req,res)=>{
 
     
 })

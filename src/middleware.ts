@@ -9,7 +9,7 @@ const jwtsecret=process.env.JWT_TOKEN;
 
 export function userMiddleware(req:Request,res:Response,next:NextFunction){
     const header=req.headers["authorization"];
-
+    console.group(header)
     if(!jwtsecret){
         return res.status(500).json({
             message:"Now jwt secret key"
