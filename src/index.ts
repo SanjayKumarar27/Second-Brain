@@ -4,8 +4,9 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import {z} from "zod";
 import bcyrpt from "bcrypt";
-import { ContentModel, UserModel } from "./db";
+import { ContentModel, LinkModel, UserModel } from "./db";
 import { userMiddleware } from "./middleware";
+import { random } from "./utils";
 
 
 dotenv.config();
@@ -151,6 +152,7 @@ app.get("/app/v1/content",userMiddleware,async (req,res)=>{
         content
     })
 })
+
 app.delete("/app/v1/content",userMiddleware,async (req,res)=>{
      //@ts-ignore
     const userid=req.userid;
@@ -164,11 +166,70 @@ app.delete("/app/v1/content",userMiddleware,async (req,res)=>{
         msg:"content deleted"
     })
 })
-app.post("/app/v1/brain/share",(req,res)=>{
-    
-})
-app.get("/app/v1/brain/:shareLink",(req,res)=>{
 
+app.post("/app/v1/brain/share",userMiddleware,async (req,res)=>{
+    const share=req.body.share;
+    const userid=req.userid
+    if(share){
+        const existingUser=await LinkModel.findOne({
+            userid
+        })
+        
+        if(existingUser){
+            res.json({
+               hash: existingUser?.hash
+            })
+        }
+
+        const hash = random(10);
+            await LinkModel.create({
+                userid: req.userid,
+                hash: hash
+            })
+
+            res.json({
+                hash
+            })
+    }else{
+        await LinkModel.deleteOne({
+            userid: req.userid
+        });
+
+        res.json({
+            message: "Removed link"
+        })
+    }
+})
+app.get("/app/v1/brain/:shareLink",async (req,res)=>{
+    const hash=req.params.shareLink;
+
+    const link=await LinkModel.findOne({
+        hash
+    });
+    if(!link){
+        res.status(403).json({
+            message:"Link does not exits"
+        })
+        return;//early return
+    }
+
+    const content=await ContentModel.find({
+        userid:link.userid
+    })
+
+    const user=await UserModel.findOne({
+        _id:link.userid
+    })
+    if(!user){
+         res.status(403).json({
+            message:"Link does not exits"
+        })
+        return;//early return
+    }
+    return res.status(200).json({
+        username:user.username,
+        content
+    })
     
 })
 
