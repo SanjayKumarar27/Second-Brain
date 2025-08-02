@@ -7,14 +7,17 @@ import bcyrpt from "bcrypt";
 import { ContentModel, LinkModel, UserModel } from "./db";
 import { userMiddleware } from "./middleware";
 import { random } from "./utils";
+import cors from "cors";
 
 
 dotenv.config();
-
 const app=express();
 app.use(express.json());
 const jwtkey=process.env.JWT_TOKEN;
 const mongourl=process.env.MONGODB_URL;
+
+app.use(cors());
+
 async function main() {
     if(!mongourl){
         console.error("MONGODB_URL is  not set")
@@ -24,7 +27,7 @@ async function main() {
     }
 }
 main();
-app.post("/app/v1/signup",async (req,res)=>{
+app.post("/api/v1/signup",async (req,res)=>{
     try{
     const Usersignup=z.object({
         username:z.string()
@@ -84,7 +87,7 @@ if(!parseResult.success){
 
 })
 
-app.post("/app/v1/signin",async (req,res)=>{
+app.post("/api/v1/signin",async (req,res)=>{
     try{
     const {username,password}=req.body;
     
@@ -122,7 +125,7 @@ app.post("/app/v1/signin",async (req,res)=>{
 })
 
 
-app.post("/app/v1/content",userMiddleware,async (req,res)=>{
+app.post("/api/v1/content",userMiddleware,async (req,res)=>{
      //@ts-ignore
     const userid=req.userid;
     const {link,type,title,tags}=req.body;
@@ -141,7 +144,7 @@ app.post("/app/v1/content",userMiddleware,async (req,res)=>{
 })
 
 
-app.get("/app/v1/content",userMiddleware,async (req,res)=>{
+app.get("/api/v1/content",userMiddleware,async (req,res)=>{
     //@ts-ignore
     const userid=req.userid;
     const content=await ContentModel.find({
@@ -153,7 +156,7 @@ app.get("/app/v1/content",userMiddleware,async (req,res)=>{
     })
 })
 
-app.delete("/app/v1/content",userMiddleware,async (req,res)=>{
+app.delete("/api/v1/content",userMiddleware,async (req,res)=>{
      //@ts-ignore
     const userid=req.userid;
     const contentId=req.body.contentid;
@@ -167,14 +170,14 @@ app.delete("/app/v1/content",userMiddleware,async (req,res)=>{
     })
 })
 
-app.post("/app/v1/brain/share",userMiddleware,async (req,res)=>{
+app.post("/api/v1/brain/share",userMiddleware,async (req,res)=>{
     const share=req.body.share;
     const userid=req.userid
     if(share){
         const existingUser=await LinkModel.findOne({
             userid
         })
-        
+
         if(existingUser){
             res.json({
                hash: existingUser?.hash
@@ -200,7 +203,7 @@ app.post("/app/v1/brain/share",userMiddleware,async (req,res)=>{
         })
     }
 })
-app.get("/app/v1/brain/:shareLink",async (req,res)=>{
+app.get("/api/v1/brain/:shareLink",async (req,res)=>{
     const hash=req.params.shareLink;
 
     const link=await LinkModel.findOne({

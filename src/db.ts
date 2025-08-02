@@ -20,7 +20,7 @@ const TagSchema=new Schema({
 
 export const TagModel=model("Tags",TagSchema);
 
-const contentType=['image','vedio','article','audio']
+const contentType=['image','youtube','tweet','audio']
 const ContentSchema=new Schema({
     link:{type:String,required:true},
     type:{type:String,enum:contentType,reuired:true},
